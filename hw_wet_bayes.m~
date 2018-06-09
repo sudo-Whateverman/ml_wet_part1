@@ -1,0 +1,63 @@
+%% Wet excercise 1 bayes
+% Made by Nick Kuhlik & Daniela Lipshitz
+
+
+%% load data and split test and training
+
+load('BreastCancerData.mat')
+X = transpose(X);
+N = size(X,1);  % total number of rows
+k_batches = 10;
+
+% testing Method No 1
+
+
+% testing Method No 2
+p = .8;    % proportion of rows to select for training
+tf = false(N,1);    % create logical index vector
+tf(1:round(p*N)) = true;
+tf = tf(randperm(N));   % randomise order
+for i=1:length(y)
+    if y(i)==0
+        y(i)= -1; % label as minus one for easier clasification
+    end
+end
+dataTraining = X(tf,:);
+labelTraining = y(tf,:);
+dataTesting = X(~tf,:);
+labelTesting = y(~tf,:);
+
+
+%% Naive Bayes
+
+% 1. normal 1-dim in each coordinate, get mean and std
+D = size(X,2);
+malignant = labelTraining == 1;
+non_malignant = ~malignant;
+malignant_MLE = zeros(D, 2);
+non_malignant_MLE = zeros(D, 2);
+for i=1:D
+    malignant_MLE(i,:) = normfit(dataTraining(malignant,i));
+    non_malignant_MLE(i,:) = normfit(dataTraining(non_malignant,i));
+end
+
+% 2. estimate the apriori Class probability
+P_malignant = sum(malignant) / length(labelTraining);
+P_non_malignant = sum(non_malignant)/ length(labelTraining);
+
+% Code Timing result = ?!!?!??!?? TODO
+% Clasification Error for Train and Test
+
+% 3. Naive Bayes estimate of the tags
+P_is = zeros(length(labelTraining),1);
+P_isnt = zeros(length(labelTraining),1);
+for k=1:length(labelTraining)
+    for i=1:D
+        P_x_given_is = normpdf(dataTraining(1,i), malignant_MLE(i,1), malignant_MLE(i,2));
+        P_x_given_non = normpdf(dataTraining(1,i), non_malignant_MLE(i,1), non_malignant_MLE(i,2));
+        P_is(k) = P_x_given_is
+    end
+    
+end
+tag = sign(P_is - P_isnt);
+result = sum(tag==labelTraining)
