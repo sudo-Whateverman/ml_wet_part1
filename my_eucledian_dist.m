@@ -9,5 +9,5 @@ function [ R ] = my_eucledian_dist(point,center)
 end
 
 %% Testing 
-% my_euclidean_dist([1,0,0],[0, 0, 0])
-% my_euclidean_dist([1,0],[0,0])
+% my_eucledian_dist([1,0,0],[0, 0, 0])
+% my_eucledian_dist([1,0],[0,0])
